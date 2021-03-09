@@ -1,19 +1,11 @@
-//
-//  AppDelegate.swift
-//  iOS-Rotate-Test
-//
-//  Created by 平山 智己 on 2021/03/09.
-//
-
 import UIKit
+import SnapKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
         return true
     }
 
@@ -34,3 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension UINavigationController {
+    open override var shouldAutorotate: Bool {
+        guard let viewController = self.visibleViewController else { return true }
+        return viewController.shouldAutorotate
+    }
+
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        guard let viewController = self.visibleViewController else { return .all }
+        return viewController.supportedInterfaceOrientations
+    }
+}
