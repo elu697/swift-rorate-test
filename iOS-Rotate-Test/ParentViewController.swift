@@ -10,7 +10,7 @@ class ParentViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .clear
         addChild(childVC)
         childVC.didMove(toParent: self)
         if let childView = childVC.view {
@@ -97,9 +97,9 @@ class ParentViewController: UIViewController {
         case .portrait:
             rotaton = 0
         case .landscapeLeft:
-            rotaton = -CGFloat.pi * 0.5
+            rotaton = -CGFloat.init(Double.pi * 0.5)
         case .landscapeRight:
-            rotaton = +CGFloat.pi * 0.5
+            rotaton = +CGFloat.init(Double.pi * 0.5)
         default:
             rotaton = 0
         }
@@ -107,45 +107,36 @@ class ParentViewController: UIViewController {
         if size.width > size.height {
             self.beginIgnoringInteractionEvents(parent: view)
             self.containerView.isHidden = true
-            snapView.isHidden = false
+            snapView.isHidden = true
         } else {
             backVC.view.isHidden = false
         }
 
         coordinator.animate(alongsideTransition: { trans in
+            self.snapView.frame = trans.containerView.bounds
             self.snapView.transform = .init(rotationAngle: CGFloat(rotaton))
-            self.snapView.frame = self.view.frame
-        }) { (comp) in
             if size.width > size.height {
-//                 self.containerView.isHidden = true
-            } else {
-                self.containerView.isHidden = false
-                self.endIgnoringInteractionEvents()
-            }
-        }
-
-        UIView.animate(withDuration: 0.3) {
-            if size.width > size.height {
-//                self.containerView.alpha = 0
                 if let childView = self.childVC.view {
                     childView.snp.updateConstraints { (update) in
                         update.height.equalTo(size.height)
                     }
                 }
             } else {
-//                self.containerView.alpha = 1
                 if let childView = self.childVC.view {
                     childView.snp.updateConstraints { (update) in
                         update.height.equalTo((size.width) * 9 / 16)
                     }
                 }
             }
+        }) { (comp) in
+            if !(size.width > size.height) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    print("AFT")
+                    self.containerView.isHidden = false
+                    self.backVC.view.isHidden = true
+                }
+            }
         }
-    }
-
-    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        print("Rotate")
-
     }
 
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
@@ -162,14 +153,6 @@ class ParentViewController: UIViewController {
 
     func beginIgnoringInteractionEvents(parent view: UIView) {
         snapView.image = view.getSnapShot(windowFrame: view.frame, outFrame: childVC.view.frame)
-        snapView.isHidden = false
-
-//        self.view.setSnapShotView(topView: view)
-    }
-
-    func endIgnoringInteractionEvents() {
-//        self.view.unsetSnapShotView()
-        snapView.isHidden = true
     }
 }
 
@@ -192,7 +175,7 @@ extension UIView {
 
     func setSnapShotView(topView: UIView) {
         let snapShot = getSnapShot(windowFrame: self.frame,
-                                   outFrame: topView.frame)
+            outFrame: topView.frame)
 
         if !self.subviews.contains(viewWithTag(self.hash) ?? .init()) {
             let snapShotImageView = UIImageView(image: snapShot)
