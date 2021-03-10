@@ -7,7 +7,7 @@ class ParentViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .black
 
         addChild(childVC)
         childVC.didMove(toParent: self)
@@ -15,11 +15,12 @@ class ParentViewController: UIViewController {
             view.addSubview(childView)
             childView.snp.makeConstraints { (make) in
                 make.top.left.right.equalToSuperview()
-                make.height.equalToSuperview().multipliedBy(0.3)
+                make.height.equalTo(view.frame.width * 9 / 16)
             }
         }
 
         // Container
+        containerView.backgroundColor = .white
         view.addSubview(containerView)
         containerView.snp.makeConstraints { (make) in
             make.top.equalTo(childVC.view.snp.bottom)
@@ -36,8 +37,71 @@ class ParentViewController: UIViewController {
             make.height.equalTo(50)
             make.centerX.centerY.equalToSuperview()
         }
+
+        let dummyView = UIView()
+        dummyView.backgroundColor = .red
+        containerView.addSubview(dummyView)
+        dummyView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(parentLabel.snp.bottom).offset(50)
+            make.width.height.equalTo(50)
+        }
+
+        let dummyView2 = UIView()
+        dummyView2.backgroundColor = .red
+        containerView.addSubview(dummyView2)
+        dummyView2.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(parentLabel.snp.top).offset(-50)
+            make.width.height.equalTo(50)
+        }
+
+        let dummyView3 = UIView()
+        dummyView3.backgroundColor = .red
+        containerView.addSubview(dummyView3)
+        dummyView3.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.right.equalTo(parentLabel.snp.left).offset(-50)
+            make.width.height.equalTo(50)
+        }
+
+        let dummyView4 = UIView()
+        dummyView4.backgroundColor = .red
+        containerView.addSubview(dummyView4)
+        dummyView4.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.left.equalTo(parentLabel.snp.right).offset(50)
+            make.width.height.equalTo(50)
+        }
+
+        view.bringSubviewToFront(childVC.view)
     }
-    
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        //ここだとhiddenほぼ意味ない
+        if size.width > size.height {
+            self.containerView.isHidden = true
+        } else {
+            self.containerView.isHidden = false
+        }
+        coordinator.animate(alongsideTransition: { [weak self] trans in
+            if size.width > size.height {
+                if let childView = self?.childVC.view {
+                    childView.snp.updateConstraints { (update) in
+                        update.height.equalTo(size.height)
+                    }
+                }
+            } else {
+                if let childView = self?.childVC.view {
+                    childView.snp.updateConstraints { (update) in
+                        update.height.equalTo((self?.view.frame.width ?? 0) * 9/16)
+                    }
+                }
+            }
+        }, completion: nil)
+    }
+
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotate")
     }
@@ -51,7 +115,7 @@ class ParentViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return false
+        return true
     }
     /*
     // MARK: - Navigation

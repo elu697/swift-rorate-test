@@ -34,21 +34,15 @@ class ChildViewController: UIViewController {
     }
 
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        var orientation: UIDeviceOrientation
         switch fromInterfaceOrientation {
         case .landscapeLeft, .landscapeRight:
-            orientation = .portrait
             isFullScreen = false
-            UIDevice.current.setValue(UIDeviceOrientation.unknown.rawValue, forKey: #keyPath(UIDevice.orientation))
-            UIDevice.current.setValue(orientation.rawValue, forKey: #keyPath(UIDevice.orientation))
-            UIViewController.attemptRotationToDeviceOrientation()
         case .portrait, .portraitUpsideDown:
-            orientation = .landscapeLeft
             isFullScreen = true
-            UIDevice.current.setValue(UIDeviceOrientation.unknown.rawValue, forKey: #keyPath(UIDevice.orientation))
-            UIDevice.current.setValue(orientation.rawValue, forKey: #keyPath(UIDevice.orientation))
-            UIViewController.attemptRotationToDeviceOrientation()
-        default:
+            break
+        case .unknown:
+            break
+        @unknown default:
             break
         }
     }
@@ -60,11 +54,19 @@ class ChildViewController: UIViewController {
             orientation = .portrait
             isFullScreen = false
         } else {
-            orientation = .landscapeLeft
+            let currentOrientation = UIDevice.current.orientation
+            switch currentOrientation {
+            case .landscapeLeft, .landscapeRight:
+                orientation = currentOrientation
+            case .portrait:
+                orientation = .landscapeLeft
+            default:
+                orientation = .landscapeLeft
+            }
             isFullScreen = true
             modalPresentationStyle = .fullScreen
         }
-        UIDevice.current.setValue(UIDeviceOrientation.unknown.rawValue, forKey: #keyPath(UIDevice.orientation))
+//        UIDevice.current.setValue(UIDeviceOrientation.unknown.rawValue, forKey: #keyPath(UIDevice.orientation))
         UIDevice.current.setValue(orientation.rawValue, forKey: #keyPath(UIDevice.orientation))
         UIViewController.attemptRotationToDeviceOrientation()
     }
@@ -74,11 +76,11 @@ class ChildViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        return .landscape
     }
 
     override var shouldAutorotate: Bool {
-        return false
+        return true
     }
     /*
     // MARK: - Navigation
