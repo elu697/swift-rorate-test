@@ -4,11 +4,13 @@ class ParentViewController: UIViewController {
 
     let childVC = ChildViewController()
     let containerView = UIView()
+    var backVC = ViewController()
+    var snapView = UIImageView()
+    var backWindow: UIWindow?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-
+        view.backgroundColor = .lightGray
         addChild(childVC)
         childVC.didMove(toParent: self)
         if let childView = childVC.view {
@@ -75,35 +77,75 @@ class ParentViewController: UIViewController {
         }
 
         view.bringSubviewToFront(childVC.view)
+        backVC.view = snapView
+        view.insertSubview(snapView, aboveSubview: containerView)
+        snapView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+
+        self.view.insertSubview(backVC.view, aboveSubview: containerView)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        //ここだとhiddenほぼ意味ない
-        if size.width > size.height {
-            self.containerView.isHidden = true
-        } else {
-            self.containerView.isHidden = false
+        let rotaton: CGFloat
+        switch UIDevice.current.orientation {
+        case .portrait:
+            rotaton = 0
+        case .landscapeLeft:
+            rotaton = -CGFloat.pi * 0.5
+        case .landscapeRight:
+            rotaton = +CGFloat.pi * 0.5
+        default:
+            rotaton = 0
         }
-        coordinator.animate(alongsideTransition: { [weak self] trans in
+
+        if size.width > size.height {
+            self.beginIgnoringInteractionEvents(parent: view)
+            self.containerView.isHidden = true
+            snapView.isHidden = false
+        } else {
+            backVC.view.isHidden = false
+        }
+
+        coordinator.animate(alongsideTransition: { trans in
+            self.snapView.transform = .init(rotationAngle: CGFloat(rotaton))
+            self.snapView.frame = self.view.frame
+        }) { (comp) in
             if size.width > size.height {
-                if let childView = self?.childVC.view {
+//                 self.containerView.isHidden = true
+            } else {
+                self.containerView.isHidden = false
+                self.endIgnoringInteractionEvents()
+            }
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            if size.width > size.height {
+//                self.containerView.alpha = 0
+                if let childView = self.childVC.view {
                     childView.snp.updateConstraints { (update) in
                         update.height.equalTo(size.height)
                     }
                 }
             } else {
-                if let childView = self?.childVC.view {
+//                self.containerView.alpha = 1
+                if let childView = self.childVC.view {
                     childView.snp.updateConstraints { (update) in
-                        update.height.equalTo((self?.view.frame.width ?? 0) * 9/16)
+                        update.height.equalTo((size.width) * 9 / 16)
                     }
                 }
             }
-        }, completion: nil)
+        }
     }
 
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotate")
+
     }
 
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
@@ -117,14 +159,59 @@ class ParentViewController: UIViewController {
     override var shouldAutorotate: Bool {
         return true
     }
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func beginIgnoringInteractionEvents(parent view: UIView) {
+        snapView.image = view.getSnapShot(windowFrame: view.frame, outFrame: childVC.view.frame)
+        snapView.isHidden = false
+
+//        self.view.setSnapShotView(topView: view)
     }
-    */
+
+    func endIgnoringInteractionEvents() {
+//        self.view.unsetSnapShotView()
+        snapView.isHidden = true
+    }
+}
+
+extension UIView {
+    func getSnapShot(windowFrame: CGRect, outFrame: CGRect) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(windowFrame.size, false, 0.0)
+        guard let context: CGContext = UIGraphicsGetCurrentContext() else { return .init() }
+
+        layer.render(in: context)
+        //要らない領域を潰す
+        context.setFillColor(UIColor.black.cgColor)
+        context.fill(outFrame)
+
+        guard let capturedImage: UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return .init() }
+
+        UIGraphicsEndImageContext()
+
+        return capturedImage
+    }
+
+    func setSnapShotView(topView: UIView) {
+        let snapShot = getSnapShot(windowFrame: self.frame,
+                                   outFrame: topView.frame)
+
+        if !self.subviews.contains(viewWithTag(self.hash) ?? .init()) {
+            let snapShotImageView = UIImageView(image: snapShot)
+            snapShotImageView.viewWithTag(self.hash)
+            addSubview(snapShotImageView)
+            NSLayoutConstraint.activate([
+                snapShotImageView.topAnchor.constraint(equalTo: topAnchor),
+                snapShotImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                snapShotImageView.leftAnchor.constraint(equalTo: leftAnchor),
+                snapShotImageView.rightAnchor.constraint(equalTo: rightAnchor)
+                ])
+        } else {
+            (self.viewWithTag(self.hash) as? UIImageView)?.image = snapShot
+        }
+        self.viewWithTag(self.hash)?.isHidden = false
+    }
+
+    func unsetSnapShotView() {
+        self.viewWithTag(self.hash)?.isHidden = true
+    }
 
 }
