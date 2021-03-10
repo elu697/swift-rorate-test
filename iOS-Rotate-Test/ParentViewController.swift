@@ -17,7 +17,7 @@ class ParentViewController: UIViewController {
             view.addSubview(childView)
             childView.snp.makeConstraints { (make) in
                 make.top.left.right.equalToSuperview()
-                make.height.equalTo(view.frame.width * 9 / 16)
+                make.height.equalTo(view.bounds.width * 9 / 16)
             }
         }
 
@@ -90,7 +90,12 @@ class ParentViewController: UIViewController {
         super.viewDidAppear(animated)
     }
 
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        print(fromInterfaceOrientation)
+    }
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+
         super.viewWillTransition(to: size, with: coordinator)
         let rotaton: CGFloat
         switch UIDevice.current.orientation {
@@ -98,16 +103,23 @@ class ParentViewController: UIViewController {
             rotaton = 0
         case .landscapeLeft:
             rotaton = -CGFloat.init(Double.pi * 0.5)
+            if !(snapView.bounds.width > snapView.bounds.height) {
+                self.beginIgnoringInteractionEvents(parent: view)
+            }
+
         case .landscapeRight:
-            rotaton = +CGFloat.init(Double.pi * 0.5)
+            rotaton = CGFloat.init(Double.pi * 0.5)
+            if !(snapView.bounds.width > snapView.bounds.height) {
+                self.beginIgnoringInteractionEvents(parent: view)
+            }
+
         default:
             rotaton = 0
         }
-
+//        childVC.view.alpha = 0.4
         if size.width > size.height {
-            self.beginIgnoringInteractionEvents(parent: view)
             self.containerView.isHidden = true
-            snapView.isHidden = true
+            self.snapView.isHidden = true
         } else {
             backVC.view.isHidden = false
         }
@@ -130,8 +142,8 @@ class ParentViewController: UIViewController {
             }
         }) { (comp) in
             if !(size.width > size.height) {
+                // affin変換のcompleateのタイミングがシビアで挙動がおかしくなるので
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    print("AFT")
                     self.containerView.isHidden = false
                     self.backVC.view.isHidden = true
                 }
@@ -139,9 +151,6 @@ class ParentViewController: UIViewController {
         }
     }
 
-    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .landscapeLeft
-    }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .allButUpsideDown

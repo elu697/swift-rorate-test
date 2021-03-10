@@ -50,7 +50,7 @@ class ChildViewController: UIViewController {
     @objc func didTapedActionButton(action: UITapGestureRecognizer) {
         print("Tap: \(supportedInterfaceOrientations)")
         let orientation: UIDeviceOrientation
-        if isFullScreen {
+        if isFullScreen || UIScreen.main.bounds.width > UIScreen.main.bounds.height {
             orientation = .portrait
             isFullScreen = false
         } else {
@@ -76,7 +76,7 @@ class ChildViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscape
+        return .allButUpsideDown
     }
 
     override var shouldAutorotate: Bool {
