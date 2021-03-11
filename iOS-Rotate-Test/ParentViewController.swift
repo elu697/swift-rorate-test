@@ -8,6 +8,8 @@ class ParentViewController: UIViewController {
     var snapView = UIImageView()
     var backWindow: UIWindow?
 
+    var dummyVC: DummyViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
@@ -95,8 +97,8 @@ class ParentViewController: UIViewController {
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-
         super.viewWillTransition(to: size, with: coordinator)
+        snapView.alpha = 0
         let rotaton: CGFloat
         switch UIDevice.current.orientation {
         case .portrait:
@@ -106,13 +108,11 @@ class ParentViewController: UIViewController {
             if !(snapView.bounds.width > snapView.bounds.height) {
                 self.beginIgnoringInteractionEvents(parent: view)
             }
-
         case .landscapeRight:
             rotaton = CGFloat.init(Double.pi * 0.5)
             if !(snapView.bounds.width > snapView.bounds.height) {
                 self.beginIgnoringInteractionEvents(parent: view)
             }
-
         default:
             rotaton = 0
         }
@@ -163,47 +163,4 @@ class ParentViewController: UIViewController {
     func beginIgnoringInteractionEvents(parent view: UIView) {
         snapView.image = view.getSnapShot(windowFrame: view.frame, outFrame: childVC.view.frame)
     }
-}
-
-extension UIView {
-    func getSnapShot(windowFrame: CGRect, outFrame: CGRect) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(windowFrame.size, false, 0.0)
-        guard let context: CGContext = UIGraphicsGetCurrentContext() else { return .init() }
-
-        layer.render(in: context)
-        //要らない領域を潰す
-        context.setFillColor(UIColor.black.cgColor)
-        context.fill(outFrame)
-
-        guard let capturedImage: UIImage = UIGraphicsGetImageFromCurrentImageContext() else { return .init() }
-
-        UIGraphicsEndImageContext()
-
-        return capturedImage
-    }
-
-    func setSnapShotView(topView: UIView) {
-        let snapShot = getSnapShot(windowFrame: self.frame,
-            outFrame: topView.frame)
-
-        if !self.subviews.contains(viewWithTag(self.hash) ?? .init()) {
-            let snapShotImageView = UIImageView(image: snapShot)
-            snapShotImageView.viewWithTag(self.hash)
-            addSubview(snapShotImageView)
-            NSLayoutConstraint.activate([
-                snapShotImageView.topAnchor.constraint(equalTo: topAnchor),
-                snapShotImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                snapShotImageView.leftAnchor.constraint(equalTo: leftAnchor),
-                snapShotImageView.rightAnchor.constraint(equalTo: rightAnchor)
-                ])
-        } else {
-            (self.viewWithTag(self.hash) as? UIImageView)?.image = snapShot
-        }
-        self.viewWithTag(self.hash)?.isHidden = false
-    }
-
-    func unsetSnapShotView() {
-        self.viewWithTag(self.hash)?.isHidden = true
-    }
-
 }
