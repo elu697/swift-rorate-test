@@ -2,7 +2,7 @@ import UIKit
 
 class ChildViewController: UIViewController {
     var isFullScreen: Bool = false
-    var dummyVC: DummyViewController?
+    var dummyVC: PortraitBackViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,7 @@ class ChildViewController: UIViewController {
             make.height.equalTo(50)
         }
 
-        dummyVC = DummyViewController(parent: self, top: self.view)
+        dummyVC = PortraitBackViewController(parent: self, top: self.view)
         // Do any additional setup after loading the view.
     }
 

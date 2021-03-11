@@ -1,21 +1,12 @@
-//
-//  DummyViewController.swift
-//  iOS-Rotate-Test
-//
-//  Created by 平山 智己 on 2021/03/10.
-//
-
 import UIKit
 
 /// TopのVCに追加
-/// let dummyVC: DummyViewController?
-/// dummyVC = DummyViewController(parent: self, top: self.view)
-class DummyViewController: UIViewController {
+/// let baclVC: PortraitBackViewController?
+/// backVC = PortraitBackViewController(parent: self, top: self.view)
+class PortraitBackViewController: UIViewController {
     private let parentVC: UIViewController
     private let topView: UIView
     private let snapShotView: UIImageView = UIImageView()
-
-    private var isSnap = false
 
     init(parent: UIViewController, top: UIView) {
         self.parentVC = parent.parent ?? parent

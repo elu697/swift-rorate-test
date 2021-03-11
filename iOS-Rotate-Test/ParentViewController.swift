@@ -8,7 +8,7 @@ class ParentViewController: UIViewController {
     var snapView = UIImageView()
     var backWindow: UIWindow?
 
-    var dummyVC: DummyViewController?
+    var dummyVC: PortraitBackViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()

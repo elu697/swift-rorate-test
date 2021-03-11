@@ -14,7 +14,7 @@
 		9620BE6325F73636004EE17D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9620BE6125F73636004EE17D /* LaunchScreen.storyboard */; };
 		9622F2A925F7BB3500FEB845 /* ParentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622F2A825F7BB3500FEB845 /* ParentViewController.swift */; };
 		9622F2AE25F7BC8800FEB845 /* ChildViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622F2AD25F7BC8800FEB845 /* ChildViewController.swift */; };
-		9622F2BF25F9A68700FEB845 /* DummyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622F2BE25F9A68700FEB845 /* DummyViewController.swift */; };
+		9622F2BF25F9A68700FEB845 /* PortraitBackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622F2BE25F9A68700FEB845 /* PortraitBackViewController.swift */; };
 		977895AF29E9F33342C5AF9D /* Pods_iOS_Rotate_Test.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED828F87F498C79394DAD770 /* Pods_iOS_Rotate_Test.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,7 +29,7 @@
 		9620BE6425F73636004EE17D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9622F2A825F7BB3500FEB845 /* ParentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentViewController.swift; sourceTree = "<group>"; };
 		9622F2AD25F7BC8800FEB845 /* ChildViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildViewController.swift; sourceTree = "<group>"; };
-		9622F2BE25F9A68700FEB845 /* DummyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyViewController.swift; sourceTree = "<group>"; };
+		9622F2BE25F9A68700FEB845 /* PortraitBackViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortraitBackViewController.swift; sourceTree = "<group>"; };
 		A7528D0FC32F289261AE2E3A /* Pods-iOS-Rotate-Test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Rotate-Test.release.xcconfig"; path = "Target Support Files/Pods-iOS-Rotate-Test/Pods-iOS-Rotate-Test.release.xcconfig"; sourceTree = "<group>"; };
 		ED828F87F498C79394DAD770 /* Pods_iOS_Rotate_Test.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Rotate_Test.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -67,7 +67,7 @@
 		9620BE5525F73634004EE17D /* iOS-Rotate-Test */ = {
 			isa = PBXGroup;
 			children = (
-				9622F2BE25F9A68700FEB845 /* DummyViewController.swift */,
+				9622F2BE25F9A68700FEB845 /* PortraitBackViewController.swift */,
 				9620BE5625F73634004EE17D /* AppDelegate.swift */,
 				9620BE5825F73634004EE17D /* SceneDelegate.swift */,
 				9620BE5A25F73634004EE17D /* ViewController.swift */,
@@ -211,7 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9622F2A925F7BB3500FEB845 /* ParentViewController.swift in Sources */,
-				9622F2BF25F9A68700FEB845 /* DummyViewController.swift in Sources */,
+				9622F2BF25F9A68700FEB845 /* PortraitBackViewController.swift in Sources */,
 				9622F2AE25F7BC8800FEB845 /* ChildViewController.swift in Sources */,
 				9620BE5B25F73634004EE17D /* ViewController.swift in Sources */,
 				9620BE5725F73634004EE17D /* AppDelegate.swift in Sources */,
